@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Tryrun 1</title>
+</head>
+<body>
+    <div id="view">
+        <p>点击下面的按钮，将 Ajax 请求回来的数据更新在该文本内</p>
+    </div>
+    <button type="button" id="btn">发起 Ajax 请求</button>
+
+    <script>
+        document.getElementById("btn").onclick = ajaxRequest;
+function httpPostTest() {
+    var url = 'http://127.0.0.1:8000/Login/login?module=httpPostTest';
+    var xhr = new XMLHttpRequest();
+    xhr.responseType = "text";
+    xhr.open('POST', url);
+    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded;");
+    //1. 发送 formData
+    var formData = new FormData();
+    formData.append("username", "Anne");
+    formData.append("accountnum", 123456);
+    xhr.send(formData);
+ 
+    //2. 发送 JSON
+    // xhr.send({"username": "Anne"});
+ 
+    //3. 发送 字符串
+    // xhr.send(JSON.stringify({"username": "Anne"}));
+ 
+    xhr.onload = function(e) {
+        console.log('httpPostTest onload。e====>' + JSON.stringify(e));
+    };
+    xhr.onreadystatechange = function(e) {
+        console.log('httpPostTest onreadystatechange。e====>' + JSON.stringify(e));
+        if(xhr.readyState == 4 && xhr.status == 200){
+            var xhrRes = xhr.responseText;
+            console.log('httpPostTest return message====>' + xhrRes);
+            //正常情况下收到返回值 {"status": 1, "res": "http post test return!"}
+        }
+    };
+}
+        function ajaxRequest () {
+            var xhr = new XMLHttpRequest();
+httpPostTest();
+            //xhr.open("GET", "https://www.w3cschool.cn/statics/demosource/ajax_info.txt", true);
+           // xhr.send();
+
+            xhr.onreadystatechange = function(){
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    document.getElementById("view").innerHTML = xhr.responseText;
+                }                
+            }
+        }
+    </script>
+</body>
