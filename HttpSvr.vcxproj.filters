@@ -27,6 +27,9 @@
     <ClCompile Include="http_module_mgr.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="login_module.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="HttpService.h">
@@ -37,6 +40,9 @@
     </ClInclude>
     <ClInclude Include="http_module_mgr.h">
       <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="login_module.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

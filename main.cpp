@@ -11,19 +11,6 @@
 #include <iostream>
 #include "HttpService.h"
 
-Module(Login) {
-	API(login, int) {
-		con.send("login yes");
-		cout << "yes" << endl;
-	}
-};
-
-Module(Operation) {
-	API(del, int) {
-		cout << "del" << endl;
-	}
-};
-
 //void Login::login(connection &c,int &a) {
 //	cout << "yes" << endl;
 //}

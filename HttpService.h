@@ -20,6 +20,8 @@ Http·þÎñ
 
 #include "mongoose.h"
 #include "http_module_mgr.h"
+#include "static_json.h"
+#include "dynamic.h"
 
 class HttpService {
   public:

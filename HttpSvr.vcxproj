@@ -84,6 +84,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>E:\Project\http_server\include\json;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -108,6 +109,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>E:\Project\http_server\include\json</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -117,12 +119,14 @@
   <ItemGroup>
     <ClCompile Include="HttpService.cpp" />
     <ClCompile Include="http_module_mgr.cpp" />
+    <ClCompile Include="login_module.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="mongoose.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="HttpService.h" />
     <ClInclude Include="http_module_mgr.h" />
+    <ClInclude Include="login_module.h" />
     <ClInclude Include="mongoose.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

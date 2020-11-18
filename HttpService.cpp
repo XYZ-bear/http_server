@@ -18,6 +18,7 @@ void HttpService::mgEvHandler(struct mg_connection *nc, int ev, void *p) {
 			connection con;
 			con.connect = nc;
 			con.msg = msg;
+
 			switch (*msg->message.p)
 			{
 			case 'P':
@@ -46,7 +47,9 @@ void HttpService::mgEvHandler(struct mg_connection *nc, int ev, void *p) {
 							mab = module_mgr::modules_[uri];
 						}
 						else if (split_pos == 1) {
-							mab.deal(con, uri);
+							if (!mab.deal(con, uri)) {
+								con.send("error api");
+							}
 							break;
 						}
 						uri = "";
@@ -58,18 +61,18 @@ void HttpService::mgEvHandler(struct mg_connection *nc, int ev, void *p) {
 				}
 			}
 
-			//body内容
-			char* body = new char[msg->body.len + 1];
-			memset(body, 0, msg->body.len + 1);
-			memcpy(body, msg->body.p, msg->body.len);
+			////body内容
+			//char* body = new char[msg->body.len + 1];
+			//memset(body, 0, msg->body.len + 1);
+			//memcpy(body, msg->body.p, msg->body.len);
 
-			//返回body信息
-			mgSendBody(nc, "body content");
+			////返回body信息
+			//mgSendBody(nc, "body content");
 
-			//返回下载文件
-			//mgSendFile("相对于s_http_server_opts.document_root的文件路径");
+			////返回下载文件
+			////mgSendFile("相对于s_http_server_opts.document_root的文件路径");
 
-			delete body;
+			//delete body;
 		}
     }
 }
@@ -105,7 +108,7 @@ bool HttpService::start(const char *port) {
     s_http_server_opts.enable_directory_listing = "yes";
 
     for (;;) {
-        mg_mgr_poll(&mgr, 1); //1s轮训一次
+        mg_mgr_poll(&mgr, 500); //1s轮训一次
     }
     mg_mgr_free(&mgr);
 
