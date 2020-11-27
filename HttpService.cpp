@@ -18,47 +18,14 @@ void HttpService::mgEvHandler(struct mg_connection *nc, int ev, void *p) {
 			connection con;
 			con.connect = nc;
 			con.msg = msg;
-
-			switch (*msg->message.p)
-			{
-			case 'P':
-			case 'p': {
-				con.method = method_t::POST;
-				break;
+			string uri(msg->uri.p, msg->uri.len);
+			bool res = false;
+			auto iter = module_api_mgr::modules_.find(uri);
+			if (iter != module_api_mgr::modules_.end()) {
+				res = iter->second.deal(con);
 			}
-			case 'G':
-			case 'g': {
-				con.method = method_t::GET;
-				break;
-			}
-			default:
-				break;
-			}
-			string uri;
-			module_api_bridge mab;
-			int split_pos = 0;
-			for (int i = 0; i < msg->uri.len; i++) {
-				char ch = msg->uri.p[i];
-				if (ch == '/' || i == msg->uri.len - 1) {
-					if (i == msg->uri.len - 1)
-						uri += ch;
-					if (uri.size() > 0) {
-						if (split_pos == 0) {
-							mab = module_mgr::modules_[uri];
-						}
-						else if (split_pos == 1) {
-							if (!mab.deal(con, uri)) {
-								con.send("error api");
-							}
-							break;
-						}
-						uri = "";
-						split_pos++;
-					}
-				}
-				else {
-					uri += ch;
-				}
+			if (!res) {
+				con.send("error api");
 			}
 
 			////bodyÄÚÈÝ

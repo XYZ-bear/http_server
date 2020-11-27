@@ -1,3 +1,3 @@
 #include "http_module_mgr.h"
 
-map<string, module_api_bridge> module_mgr::modules_;
+map<string, module_api_bridge> module_api_mgr::modules_;

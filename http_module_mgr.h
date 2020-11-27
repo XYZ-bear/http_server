@@ -11,18 +11,21 @@ class class_name :public module_base<class_name,class_name##name>
 
 #define API(fun_name,param) \
 private:\
-	void fun_name##_deal(connection &con){\
+	static bool fun_name##_deal(connection &con,void *obj){\
 		instance;\
 		param p;\
 		p.unserialize(con.msg->body.p,con.msg->body.len);\
-		fun_name(con,p);\
+		module_type *m = (module_type*)obj;\
+		m->fun_name(con,p);\
+		return true;\
 	}\
-	collector collect_##fun_name{ this,#fun_name,&module_type::fun_name##_deal };\
+	collector collect_##fun_name{ this,name,#fun_name,&module_type::fun_name##_deal };\
 public:\
 	void fun_name(connection &con, param &p)
 
 enum method_t
 {
+	NONE,
 	GET,
 	POST,
 };
@@ -32,6 +35,29 @@ public:
 	mg_connection *connect;
 	http_message *msg;
 	method_t method;
+
+	method_t get_method() {
+		if (method != method_t::NONE)
+			return method;
+		switch (*msg->message.p)
+		{
+		case 'P':
+		case 'p': {
+			method = method_t::POST;
+			break;
+		}
+		case 'G':
+		case 'g': {
+			method = method_t::GET;
+			break;
+		}
+		default:
+			break;
+		}
+		return method;
+	}
+
+
 
 	void send(const char* content) {
 		if (connect) {
@@ -64,59 +90,41 @@ public:
 
 };
 
-class collector {
-public:
-	template<class O>
-	collector(O *obj, const char* name,void(O::*api)(connection&)) {
-		if (obj)
-			obj->regist_api(name,api);
-	}
-};
-
 struct module_api_bridge {
 	void * obj = nullptr;
-	bool(*api)(connection &con, string &api_, void *obj_);
-	bool deal(connection &con, string &api_) {
-		if (obj && api)
-			return api(con, api_, obj);
-		return false;
+	bool(*api)(connection &con, void *obj_);
+	bool deal(connection &con) {
+		return api(con, obj);
 	}
 };
 
-class module_mgr {
+class module_api_mgr {
 public:
 	static map<string, module_api_bridge> modules_;
 };
 
+class collector {
+public:
+	collector(void *obj, const char* module_name, const char* name, bool(*api)(connection&, void*)) {
+		string rest("/");
+		rest += module_name;
+		rest += "/";
+		rest += name;
+		module_api_mgr::modules_[rest] = { this,api };
+	}
+};
+
 template<class M,const char* N>
 class module_base {
+public:
 	typedef M module_type;
 	typedef void(M::*api)(connection &con);
-public:
+
 	module_base() {
-		module_mgr::modules_[name] = { this,module_api_deal };
-	}
-	void regist_api(const char* name_,api api_) {
-		apis[name_] = api_;
-	}
-	bool api_deal(string &api_, connection &con) {
-		auto iter = apis.find(api_);
-		if (iter != apis.end()) {
-			M* real_obj = (M*)this;
-			(real_obj->*(iter->second))(con);
-			return true;
-		}
-		return false;
-	}
-	static bool module_api_deal(connection &con, string &api_, void *obj_) {
-		M* real_obj = (M*)obj_;
-		return real_obj->api_deal(api_, con);
 	}
 public:
 	const char* name = N;
 	static M instance;
-private:
-	map<string, api> apis;
 };
 template<class M,const char* N>
 M module_base<M, N>::instance;
