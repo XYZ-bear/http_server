@@ -1,17 +1,9 @@
-/**
- * @brief HttpService
- * @author Peng Chaowen
- * @web www.pcwen.top
- * @version 1.0
- * @date 2019/06/19
- */
+#include "http_server.h"
 
-#include "HttpService.h"
-
-struct mg_serve_http_opts HttpService::s_http_server_opts;
+struct mg_serve_http_opts http_server::s_http_server_opts;
 
 //请求事件处理
-void HttpService::mgEvHandler(struct mg_connection *nc, int ev, void *p) {
+void http_server::mgEvHandler(struct mg_connection *nc, int ev, void *p) {
     //处理request
     if (ev == MG_EV_HTTP_REQUEST) {
 		if (struct http_message *msg = (struct http_message *)p) {
@@ -45,19 +37,19 @@ void HttpService::mgEvHandler(struct mg_connection *nc, int ev, void *p) {
 }
 
 //发送body信息
-void HttpService::mgSendBody(struct mg_connection *nc, const char *content) {
+void http_server::mgSendBody(struct mg_connection *nc, const char *content) {
     mg_send_head(nc, 200, strlen(content), "Content-Type: text/plain\r\nConnection: close");
     mg_send(nc, content, strlen(content));
     nc->flags |= MG_F_SEND_AND_CLOSE;
 }
 
 //发送文件，文件的位置是相对于s_http_server_opts.document_root的路径
-void HttpService::mgSendFile(struct mg_connection *nc, struct http_message *hm, const char* filePath) {
+void http_server::mgSendFile(struct mg_connection *nc, struct http_message *hm, const char* filePath) {
     mg_http_serve_file(nc, hm, filePath, mg_mk_str("text/plain"), mg_mk_str(""));
 }
 
 //初始化并启动
-bool HttpService::start(const char *port) {
+bool http_server::start(const char *port) {
     struct mg_mgr mgr;
     struct mg_connection *nc;
 

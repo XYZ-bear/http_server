@@ -117,14 +117,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="HttpService.cpp" />
+    <ClCompile Include="http_server.cpp" />
     <ClCompile Include="http_module_mgr.cpp" />
     <ClCompile Include="login_module.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="mongoose.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="HttpService.h" />
+    <ClInclude Include="http_server.h" />
     <ClInclude Include="http_module_mgr.h" />
     <ClInclude Include="login_module.h" />
     <ClInclude Include="mongoose.h" />

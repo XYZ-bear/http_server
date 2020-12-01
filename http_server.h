@@ -5,7 +5,7 @@ Http服务
 */
 
 /**
- * @brief HttpService
+ * @brief http_server
  * @author Peng Chaowen
  * @web www.pcwen.top
  * @version 1.0
@@ -23,7 +23,7 @@ Http服务
 #include "static_json.h"
 #include "dynamic.h"
 
-class HttpService {
+class http_server {
   public:
     bool start(const char *port);
   private:
